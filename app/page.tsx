@@ -45,13 +45,19 @@ export default function AdminCalendar() {
       return;
     }
 
-    // Formateamos para que el calendario lo entienda
-    const formattedEvents = data?.map(app => ({
-      id: app.id,
-      title: `${app.clients?.name || 'Bloqueo'} - ${app.services?.title || 'Personal'}`,
-      start: new Date(app.start_time),
-      end: new Date(app.end_time),
-    })) || [];
+    // Formateamos para que el calendario lo entienda (evadiendo la restricción de TypeScript)
+    const formattedEvents = data?.map((app: any) => {
+      // Supabase a veces devuelve arrays en los joins si no hay tipos estrictos
+      const client = Array.isArray(app.clients) ? app.clients[0] : app.clients;
+      const service = Array.isArray(app.services) ? app.services[0] : app.services;
+
+      return {
+        id: app.id,
+        title: `${client?.name || 'Bloqueo'} - ${service?.title || 'Personal'}`,
+        start: new Date(app.start_time),
+        end: new Date(app.end_time),
+      };
+    }) || [];
 
     setEvents(formattedEvents);
   };
