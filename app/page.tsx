@@ -7,6 +7,8 @@ import { es } from 'date-fns/locale/es';
 import { supabase } from '../utils/supabase/client';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
+export const dynamic = 'force-dynamic';
+
 const locales = { 'es': es };
 const localizer = dateFnsLocalizer({
   format, parse, getDay, locales,
