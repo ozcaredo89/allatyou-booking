@@ -1,0 +1,35 @@
+<svg viewBox="0 0 500 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4af37" />
+      <stop offset="50%" stop-color="#fcf1b0" />
+      <stop offset="100%" stop-color="#b8860b" />
+    </linearGradient>
+    <filter id="softShadow">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(10, 35) scale(0.8)" fill="url(#goldGradient)" filter="url(#softShadow)">
+    <path d="M10 40 Q 15 10 30 35 Q 50 0 70 35 Q 85 10 90 40 L 80 55 L 20 55 Z" />
+    <circle cx="10" cy="40" r="3" fill="#ffffff" />
+    <circle cx="50" cy="5" r="4" fill="#ffffff" />
+    <circle cx="90" cy="40" r="3" fill="#ffffff" />
+  </g>
+
+  <text x="100" y="85" 
+        font-family="Brush Script MT, cursive, serif" 
+        font-size="80" 
+        fill="#1a1a1a">
+    Jennifer
+  </text>
+  
+  <text x="350" y="85" 
+        font-family="Verdana, sans-serif" 
+        font-size="25" 
+        font-weight="bold" 
+        fill="#d4af37" 
+        letter-spacing="4">
+    NAILS
+  </text>
+</svg>
