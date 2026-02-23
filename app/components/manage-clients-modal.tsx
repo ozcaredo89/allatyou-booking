@@ -7,7 +7,7 @@ import { es } from "date-fns/locale/es";
 import {
     X, Search, User, History, Image as ImageIcon,
     Trash2, Upload, Calendar as CalendarIcon, Phone,
-    FileText, Loader2, Save
+    FileText, Loader2, Save, UserPlus
 } from "lucide-react";
 
 interface ManageClientsModalProps {
@@ -79,26 +79,52 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
         setIsSavingProfile(true);
 
         try {
-            const { error } = await supabase.from('clients').update({
-                name: profileData.name,
-                phone: profileData.phone,
-                notes: profileData.notes,
-                preferences: profileData.preferences
-            }).eq('id', selectedClient.id);
+            if (selectedClient.isNew) {
+                // Modo Creación
+                const { data: newClient, error } = await supabase.from('clients').insert([{
+                    name: profileData.name,
+                    phone: profileData.phone,
+                    notes: profileData.notes,
+                    preferences: profileData.preferences
+                }]).select().single();
 
-            if (error) throw error;
+                if (error) throw error;
 
-            // Actualizar localmente
-            const updatedClient = { ...selectedClient, ...profileData };
-            setSelectedClient(updatedClient);
-            setClients(clients.map(c => c.id === selectedClient.id ? updatedClient : c));
-            alert("Perfil actualizado!");
+                alert("Cliente registrado exitosamente!");
+                setSelectedClient(newClient);
+                setClients([...clients, newClient]);
+
+            } else {
+                // Modo Edición
+                const { error } = await supabase.from('clients').update({
+                    name: profileData.name,
+                    phone: profileData.phone,
+                    notes: profileData.notes,
+                    preferences: profileData.preferences
+                }).eq('id', selectedClient.id);
+
+                if (error) throw error;
+
+                // Actualizar localmente
+                const updatedClient = { ...selectedClient, ...profileData };
+                setSelectedClient(updatedClient);
+                setClients(clients.map(c => c.id === selectedClient.id ? updatedClient : c));
+                alert("Perfil actualizado!");
+            }
         } catch (error) {
             console.error(error);
-            alert("Error actualizando el perfil");
+            alert("Error guardando el cliente");
         } finally {
             setIsSavingProfile(false);
         }
+    };
+
+    const handleCreateNewClient = () => {
+        setSelectedClient({ isNew: true, name: "Nuevo Cliente" });
+        setProfileData({ name: "", phone: "", notes: "", preferences: "" });
+        setAppointmentsH([]);
+        setPhotos([]);
+        setActiveTab("profile");
     };
 
     const handleUploadPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,9 +196,14 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                 {/* PANEL LATERAL: Lista de clientes */}
                 <div className="w-1/3 bg-slate-50 border-r border-slate-200 flex flex-col h-full">
                     <div className="p-6 border-b border-slate-200">
-                        <h2 className="text-xl font-black text-slate-800 flex items-center gap-2 mb-4">
-                            <User className="text-pink-400" /> Clientes
-                        </h2>
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                                <User className="text-pink-400" /> Clientes
+                            </h2>
+                            <button onClick={handleCreateNewClient} className="bg-pink-100/50 text-pink-600 p-2 rounded-xl hover:bg-pink-100 transition-colors" title="Nuevo Cliente">
+                                <UserPlus size={18} />
+                            </button>
+                        </div>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                             <input
@@ -230,12 +261,16 @@ export function ManageClientsModal({ onClose }: ManageClientsModalProps) {
                                     <button onClick={() => setActiveTab('profile')} className={`pb-3 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'profile' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
                                         <User size={16} /> Perfil y Preferencias
                                     </button>
-                                    <button onClick={() => setActiveTab('history')} className={`pb-3 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'history' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
-                                        <History size={16} /> Historial Citas
-                                    </button>
-                                    <button onClick={() => setActiveTab('gallery')} className={`pb-3 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'gallery' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
-                                        <ImageIcon size={16} /> Galería de Trabajos
-                                    </button>
+                                    {!selectedClient.isNew && (
+                                        <>
+                                            <button onClick={() => setActiveTab('history')} className={`pb-3 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'history' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
+                                                <History size={16} /> Historial Citas
+                                            </button>
+                                            <button onClick={() => setActiveTab('gallery')} className={`pb-3 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'gallery' ? 'text-pink-600 border-b-2 border-pink-500' : 'text-slate-400 hover:text-slate-600'}`}>
+                                                <ImageIcon size={16} /> Galería de Trabajos
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
 
