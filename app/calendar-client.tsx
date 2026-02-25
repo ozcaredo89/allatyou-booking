@@ -6,7 +6,7 @@ import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, addMinutes } from 'date-fns';
 import { es } from 'date-fns/locale/es';
 import { supabase } from '../utils/supabase/client';
-import { MessageCircle, Search, UserPlus, Scissors, Settings, Edit2, Eye, EyeOff, Plus, Users } from 'lucide-react';
+import { MessageCircle, Search, UserPlus, Scissors, Settings, Edit2, Eye, EyeOff, Plus, Users, Instagram } from 'lucide-react';
 import { ManageClientsModal } from './components/manage-clients-modal';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -205,7 +205,17 @@ export function AdminCalendarClient() {
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
+          <a
+            href="https://www.instagram.com/yeniferrr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2.5 text-pink-400 hover:text-pink-600 hover:bg-pink-50 rounded-xl transition-all"
+            title="Ver en Instagram"
+            aria-label="Instagram de Jennifer Nails"
+          >
+            <Instagram size={20} />
+          </a>
           <button
             onClick={() => setIsClientsModalOpen(true)}
             className="flex items-center gap-2 text-pink-500 bg-pink-50/50 hover:bg-pink-100 px-5 py-2.5 rounded-xl font-bold transition-all text-sm border border-pink-100/50"
